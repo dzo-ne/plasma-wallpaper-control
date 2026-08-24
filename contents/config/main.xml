@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile name=""/>
+
+  <group name="General">
+    <entry name="Image" type="String">
+      <label>Path or URL to the wallpaper image</label>
+      <default></default>
+    </entry>
+    <entry name="CropX" type="Double">
+      <label>Normalized horizontal crop offset (0.0 to 1.0)</label>
+      <default>0.0</default>
+    </entry>
+    <entry name="CropY" type="Double">
+      <label>Normalized vertical crop offset (0.0 to 1.0)</label>
+      <default>0.0</default>
+    </entry>
+    <entry name="CropWidth" type="Double">
+      <label>Normalized crop width (0.0 to 1.0)</label>
+      <default>1.0</default>
+    </entry>
+    <entry name="CropHeight" type="Double">
+      <label>Normalized crop height (0.0 to 1.0)</label>
+      <default>1.0</default>
+    </entry>
+    <entry name="LockScreenAspect" type="bool">
+      <label>Lock crop box aspect ratio to the screen geometry</label>
+      <default>true</default>
+    </entry>
+    <entry name="AspectRatioMode" type="int">
+      <label>Selected aspect ratio preset mode (0: Screen, 1: Free, 2: 16:9, 3: 16:10, 4: 21:9, 5: 4:3, 6: 1:1, 7: 9:16)</label>
+      <default>0</default>
+    </entry>
+    <entry name="Color" type="Color">
+      <label>Fallback background matte color</label>
+      <default>#000000</default>
+    </entry>
+    <entry name="FillMode" type="int">
+      <label>Render fill mode for the cropped viewport (1: PreserveAspectCrop, 2: Stretch)</label>
+      <default>1</default>
+    </entry>
+    <entry name="ShowContextMenu" type="bool">
+      <label>Enable Dolphin File Manager context menu action</label>
+      <default>true</default>
+    </entry>
+    <entry name="AutoColorConvert" type="bool">
+      <label>Automatically convert non-sRGB / wide-gamut images to sRGB for color accuracy</label>
+      <default>true</default>
+    </entry>
+  </group>
+</kcfg>

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=KonqPopupMenu/Plugin
+MimeType=image/jpeg;image/png;image/webp;image/avif;image/bmp;image/svg+xml;
+Actions=CropAndSet;
+X-KDE-Priority=TopLevel
+
+[Desktop Action CropAndSet]
+Name=Crop & Pan as Wallpaper…
+Icon=transform-crop
+Exec=@SET_WALLPAPER_BIN@ --crop %u

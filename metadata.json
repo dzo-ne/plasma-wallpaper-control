@@ -1,0 +1,36 @@
+{
+    "KPackageStructure": "Plasma/Wallpaper",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "dragozeroone@hotmail.com",
+                "Name": "DZO"
+            }
+        ],
+        "Category": "Image",
+        "Description": "Interactive wallpaper selector with precision pan, zoom, and aspect-ratio crop control",
+        "Icon": "transform-crop",
+        "Id": "org.kde.plasma.cropwallpaper",
+        "License": "GPL-3.0-or-later",
+        "MimeTypes": [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/avif",
+            "image/bmp",
+            "image/svg+xml"
+        ],
+        "Name": "Crop & Pan",
+        "Version": "1.0.0",
+        "Website": "https://github.com/dzo-ne/plasma-wallpaper-control"
+    },
+    "X-KDE-ParentApp": "org.kde.plasmashell",
+    "X-Plasma-DropMimeTypes": [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "image/avif",
+        "image/bmp",
+        "image/svg+xml"
+    ]
+}
