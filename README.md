@@ -2,9 +2,7 @@
 
 A standalone wallpaper plugin and management utility for KDE Plasma 6 that provides interactive image selection, panning, zooming, precision aspect-ratio cropping, and multi-surface synchronization.
 
-<img width="1378" height="1038" alt="Wallpaper Control Preview" src="https://github.com/user-attachments/assets/79d0687e-7a8a-4f72-88f4-1aeab24d356c" />
-
----
+<img width="1378" height="1038" alt="Screenshot_20260826_151524" src="https://github.com/user-attachments/assets/0a2fdc9f-6b79-4a7d-a300-4a5c47515e05" />
 
 ## Features
 
@@ -16,15 +14,11 @@ A standalone wallpaper plugin and management utility for KDE Plasma 6 that provi
 - **Color Profile Awareness**: Automatic detection and on-demand sRGB conversion for wide-gamut images (Display P3, Adobe RGB, Rec. 2020) to prevent desaturated rendering.
 - **High-DPI & Multi-Monitor Support**: Resolution-independent normalized coordinate model ensures consistent wallpaper scaling across different display setups and rotations.
 
----
-
 ## Requirements
 
 - **Desktop Environment**: KDE Plasma 6.0 or newer
 - **Frameworks**: Qt 6, KDE Frameworks 6 (KF6)
 - **Dependencies**: Python 3, PyQt6, Pillow (`python3-pillow` / `python-pillow`), Polkit (`pkexec` for SDDM support)
-
----
 
 ## Installation
 
@@ -46,8 +40,6 @@ kpackagetool6 --type Plasma/Wallpaper --install .
 kpackagetool6 --type Plasma/Wallpaper --upgrade .
 ```
 
----
-
 ## Usage
 
 ### 1. From Desktop Settings
@@ -61,8 +53,6 @@ kpackagetool6 --type Plasma/Wallpaper --upgrade .
 3. Adjust the crop selection, check your desired targets (**Desktop**, **Lockscreen**, and/or **Login Screen (SDDM)**), and click **Apply**.
 4. If SDDM is selected, confirm the standard KDE authentication prompt to apply the wallpaper to the login manager.
 
----
-
 ## Uninstallation
 
 To remove the wallpaper package and the Dolphin context menu:
@@ -71,15 +61,11 @@ To remove the wallpaper package and the Dolphin context menu:
 ./uninstall.sh
 ```
 
----
-
 ## Technical Documentation
 
 For in-depth architectural specifications and implementation details:
 - **[Frontend Architecture & Design Decisions](docs/FRONTEND.md)**: QtQuick/QML UI layer, coordinate geometry math, zero-flicker preview, and layout constraints.
 - **[Backend Architecture & Design Decisions](docs/BACKEND.md)**: Python CLI bridge, DBus evaluation, LittleCMS color management, and session cache lifecycle.
-
----
 
 ## License
 
