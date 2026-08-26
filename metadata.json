@@ -21,7 +21,7 @@
             "image/svg+xml"
         ],
         "Name": "Crop & Pan",
-        "Version": "1.0.0",
+        "Version": "1.1.0",
         "Website": "https://github.com/dzo-ne/plasma-wallpaper-control"
     },
     "X-KDE-ParentApp": "org.kde.plasmashell",
