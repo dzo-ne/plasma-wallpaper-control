@@ -6,6 +6,6 @@ Actions=CropAndSet;
 X-KDE-Priority=TopLevel
 
 [Desktop Action CropAndSet]
-Name=Crop & Pan as Wallpaper…
-Icon=transform-crop
+Name=Set as Wallpaper…
+Icon=viewimage
 Exec=@SET_WALLPAPER_BIN@ --crop %u

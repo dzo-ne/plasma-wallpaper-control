@@ -606,14 +606,14 @@ Rectangle {
             QQC2.CheckBox {
                 id: desktopCheckbox
                 text: "Desktop"
-                checked: true
+                checked: false
                 enabled: !isApplying
             }
 
             QQC2.CheckBox {
                 id: lockscreenCheckbox
                 text: "Lockscreen"
-                checked: true
+                checked: false
                 enabled: !isApplying
             }
 

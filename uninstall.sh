@@ -26,10 +26,15 @@ if [ -d "$INSTALL_DIR" ]; then
     rm -rf "$INSTALL_DIR"
 fi
 
-# 2. Remove Dolphin Service Menu
+# 2. Remove Dolphin Service Menu and restore default KDE wallpaper action
 if [ -f "$SERVICEMENU_FILE" ]; then
     echo "--> Removing Dolphin service menu: $SERVICEMENU_FILE..."
     rm -f "$SERVICEMENU_FILE"
+fi
+
+if command -v kwriteconfig6 &> /dev/null; then
+    echo "--> Restoring original KDE 'Set as Wallpaper' action..."
+    kwriteconfig6 --file kservicemenurc --group Show --key wallpaperfileitemaction true
 fi
 
 # 3. Refresh KDE Service Cache
@@ -39,4 +44,4 @@ if command -v kbuildsycoca6 &> /dev/null; then
 fi
 
 echo ""
-echo "[✓] Crop & Pan Wallpaper plugin successfully uninstalled!"
+echo "[✓] Crop & Pan Wallpaper plugin successfully uninstalled and original context menu restored!"

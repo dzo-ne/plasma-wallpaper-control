@@ -122,7 +122,7 @@ ColumnLayout {
     }
 
     // Non-sRGB / Wide Gamut Color Space Detection
-    readonly property bool isNonSrgbProfile: isWideGamutImage || isConvertedImage || (srgbImagePath.length > 0)
+    readonly property bool isNonSrgbProfile: isWideGamutImage || isConvertedImage || (srgbImagePath.length > 0) || (detectedProfileName.length > 0 && detectedProfileName !== "sRGB")
 
     readonly property string colorProfileName: {
         if (detectedProfileName.length > 0) {
@@ -189,11 +189,16 @@ ColumnLayout {
                 ? i18nd("plasma_wallpaper_org.kde.cropwallpaper", "File manager:")
                 : "File manager:"
             text: (typeof i18nd !== "undefined")
-                ? i18nd("plasma_wallpaper_org.kde.cropwallpaper", "Show \"Crop & Pan as Wallpaper…\" in Dolphin context menu")
-                : "Show \"Crop & Pan as Wallpaper…\" in Dolphin context menu"
+                ? i18nd("plasma_wallpaper_org.kde.cropwallpaper", "Replace default \"Set as Wallpaper\" in Dolphin context menu")
+                : "Replace default \"Set as Wallpaper\" in Dolphin context menu"
             checked: cfg_ShowContextMenu
             onToggled: {
                 cfg_ShowContextMenu = checked;
+                if (checked) {
+                    contextMenuSource.connectSource(`python3 "${backendBinPath}" --enable-context-menu`);
+                } else {
+                    contextMenuSource.connectSource(`python3 "${backendBinPath}" --disable-context-menu`);
+                }
             }
         }
 
@@ -754,8 +759,14 @@ ColumnLayout {
             disconnectSource(sourceName);
             try {
                 const meta = JSON.parse(out);
+                if (meta.is_non_srgb) {
+                    isWideGamutImage = true;
+                }
                 if (meta.profile_name) {
                     detectedProfileName = meta.profile_name;
+                }
+                if (meta.is_converted) {
+                    useSrgbFix = true;
                 }
                 if (meta.original_url) {
                     rawImagePath = meta.original_url;
@@ -764,6 +775,15 @@ ColumnLayout {
                     }
                 }
             } catch (e) {}
+        }
+    }
+
+    Plasma5Support.DataSource {
+        id: contextMenuSource
+        engine: "executable"
+        connectedSources: []
+        onNewData: (sourceName, data) => {
+            disconnectSource(sourceName);
         }
     }
 

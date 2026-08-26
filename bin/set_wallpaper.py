@@ -289,15 +289,19 @@ def enable_context_menu():
         f.write(content)
     os.chmod(SERVICEMENU_FILE, 0o755)
     
+    # Disable default KDE wallpaperfileitemaction plugin in Dolphin context menu to avoid duplicate entries
+    subprocess.run(["kwriteconfig6", "--file", "kservicemenurc", "--group", "Show", "--key", "wallpaperfileitemaction", "false"], capture_output=True)
     subprocess.run(["kbuildsycoca6", "--noincremental"], capture_output=True)
-    print(f"[✓] Dolphin context menu enabled at: {SERVICEMENU_FILE}")
+    print(f"[✓] Dolphin context menu enabled at: {SERVICEMENU_FILE} (original 'Set as Wallpaper' overridden)")
     return True
 
 def disable_context_menu():
     if os.path.exists(SERVICEMENU_FILE):
         os.remove(SERVICEMENU_FILE)
+    # Restore default KDE wallpaperfileitemaction plugin
+    subprocess.run(["kwriteconfig6", "--file", "kservicemenurc", "--group", "Show", "--key", "wallpaperfileitemaction", "true"], capture_output=True)
     subprocess.run(["kbuildsycoca6", "--noincremental"], capture_output=True)
-    print("[✓] Dolphin context menu disabled.")
+    print("[✓] Dolphin context menu disabled (original 'Set as Wallpaper' restored).")
     return True
 
 def toggle_context_menu():
