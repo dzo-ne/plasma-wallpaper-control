@@ -22,6 +22,8 @@ Rectangle {
     property string detectedProfileName: ""
     property bool isWideGamutImage: false
     property bool isConverting: false
+    property bool isApplying: false
+    property string statusErrorMessage: ""
 
     readonly property bool isConvertedImage: cfg_Image.includes("/plasma-crop-wallpaper/converted/") || cfg_Image.includes("_srgb.png")
 
@@ -590,10 +592,48 @@ Rectangle {
                 color: Kirigami.Theme.disabledTextColor ? Kirigami.Theme.disabledTextColor : "#888888"
             }
 
+            QQC2.Label {
+                visible: statusErrorMessage.length > 0
+                text: statusErrorMessage
+                font: Kirigami.Theme.smallFont ? Kirigami.Theme.smallFont : Qt.font({ pointSize: 9 })
+                color: Kirigami.Theme.negativeTextColor ? Kirigami.Theme.negativeTextColor : "#ed1515"
+                elide: Text.ElideRight
+                Layout.maximumWidth: Kirigami.Units.gridUnit * 18
+            }
+
             Item { Layout.fillWidth: true } // spacer
+
+            QQC2.CheckBox {
+                id: desktopCheckbox
+                text: "Desktop"
+                checked: true
+                enabled: !isApplying
+            }
+
+            QQC2.CheckBox {
+                id: lockscreenCheckbox
+                text: "Lockscreen"
+                checked: true
+                enabled: !isApplying
+            }
+
+            QQC2.CheckBox {
+                id: sddmCheckbox
+                text: "Login Screen (SDDM)"
+                checked: false
+                enabled: !isApplying
+            }
+
+            QQC2.BusyIndicator {
+                running: isApplying
+                visible: isApplying
+                implicitWidth: Kirigami.Units.iconSizes.small
+                implicitHeight: Kirigami.Units.iconSizes.small
+            }
 
             QQC2.Button {
                 text: "Cancel"
+                enabled: !isApplying
                 onClicked: {
                     if (typeof wallpaperBridge !== "undefined") {
                         wallpaperBridge.closeWindow();
@@ -602,35 +642,33 @@ Rectangle {
             }
 
             QQC2.Button {
-                text: "Set on Desktop"
-                icon.name: "preferences-desktop-wallpaper"
-                onClicked: {
-                    if (typeof wallpaperBridge !== "undefined") {
-                        wallpaperBridge.applyDesktop(cfg_CropX, cfg_CropY, cfg_CropWidth, cfg_CropHeight, (useSrgbFix && srgbImagePath.length > 0) ? srgbImagePath : rawImagePath);
-                        wallpaperBridge.closeWindow();
-                    }
-                }
-            }
-
-            QQC2.Button {
-                text: "Set on Lockscreen"
-                icon.name: "system-lock-screen"
-                onClicked: {
-                    if (typeof wallpaperBridge !== "undefined") {
-                        wallpaperBridge.applyLockscreen(cfg_CropX, cfg_CropY, cfg_CropWidth, cfg_CropHeight, (useSrgbFix && srgbImagePath.length > 0) ? srgbImagePath : rawImagePath);
-                        wallpaperBridge.closeWindow();
-                    }
-                }
-            }
-
-            QQC2.Button {
-                text: "Set on Both"
+                id: applyButton
+                text: "Apply"
                 icon.name: "dialog-ok-apply"
                 highlighted: true
+                enabled: (desktopCheckbox.checked || lockscreenCheckbox.checked || sddmCheckbox.checked) && !isApplying
                 onClicked: {
                     if (typeof wallpaperBridge !== "undefined") {
-                        wallpaperBridge.applyBoth(cfg_CropX, cfg_CropY, cfg_CropWidth, cfg_CropHeight, (useSrgbFix && srgbImagePath.length > 0) ? srgbImagePath : rawImagePath);
-                        wallpaperBridge.closeWindow();
+                        isApplying = true;
+                        statusErrorMessage = "";
+                        const chosenPath = (useSrgbFix && srgbImagePath.length > 0) ? srgbImagePath : rawImagePath;
+                        const ok = wallpaperBridge.applyTargets(
+                            cfg_CropX, cfg_CropY, cfg_CropWidth, cfg_CropHeight,
+                            chosenPath,
+                            desktopCheckbox.checked,
+                            lockscreenCheckbox.checked,
+                            sddmCheckbox.checked
+                        );
+                        isApplying = false;
+                        if (ok) {
+                            wallpaperBridge.closeWindow();
+                        } else {
+                            if (sddmCheckbox.checked) {
+                                statusErrorMessage = "SDDM login screen update was cancelled or failed.";
+                            } else {
+                                statusErrorMessage = "Failed to apply wallpaper.";
+                            }
+                        }
                     }
                 }
             }

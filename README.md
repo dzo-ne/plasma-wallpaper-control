@@ -11,7 +11,8 @@ A standalone wallpaper plugin for KDE Plasma 6 that provides interactive image s
 - **Interactive Cropping and Panning**: Real-time interactive crop box with 4-corner resizing handles, rule-of-thirds grid, and drag-and-pan positioning.
 - **Screen & Custom Aspect Ratios**: Constrain crops to active display screen proportions (e.g. 16:9, 16:10, 21:9, 4:3, 1:1, 9:16) or freeform dimensions.
 - **Dolphin File Manager Integration**: Right-click any image in Dolphin or KDE file dialogs to open the standalone crop dialog ("Crop & Pan as Wallpaper...").
-- **Desktop & Lockscreen Support**: Apply cropped wallpapers directly to the active desktop, lockscreen, or both simultaneously.
+- **Desktop, Lockscreen & SDDM Support**: Apply cropped wallpapers directly to the active desktop, lockscreen, SDDM login screen, or all three simultaneously.
+- **Privilege-Aware Elevation**: Uses PolicyKit (`pkexec`) to securely export and configure SDDM login screen wallpapers without running the whole app as root.
 - **Color Profile Awareness**: Automatic detection and on-demand sRGB conversion for wide-gamut images (Display P3, Adobe RGB, Rec. 2020) to prevent desaturated rendering.
 - **High-DPI & Multi-Monitor Support**: Resolution-independent normalized coordinate model ensures consistent wallpaper scaling across different display setups and rotations.
 
@@ -21,7 +22,7 @@ A standalone wallpaper plugin for KDE Plasma 6 that provides interactive image s
 
 - **Desktop Environment**: KDE Plasma 6.0 or newer
 - **Frameworks**: Qt 6, KDE Frameworks 6 (KF6)
-- **Dependencies**: Python 3, PyQt6, Pillow (`python3-pillow` / `python-pillow`)
+- **Dependencies**: Python 3, PyQt6, Pillow (`python3-pillow` / `python-pillow`), Polkit (`pkexec` for SDDM support)
 
 ---
 
@@ -57,7 +58,8 @@ kpackagetool6 --type Plasma/Wallpaper --upgrade .
 ### 2. From Dolphin File Manager
 1. Right-click any image file in Dolphin.
 2. Select **Crop & Pan as Wallpaper...**
-3. Adjust the crop selection and click **Set on Desktop**, **Set on Lockscreen**, or **Set on Both**.
+3. Adjust the crop selection, check your desired targets (**Desktop**, **Lockscreen**, and/or **Login Screen (SDDM)**), and click **Apply**.
+4. If SDDM is selected, confirm the standard KDE authentication prompt to apply the wallpaper to the login manager.
 
 ---
 

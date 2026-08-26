@@ -97,3 +97,38 @@ for (let i = 0; i < allDesktops.length; ++i) {
 
 ### Lockscreen Configuration
 Lockscreen settings are written directly to `~/.config/kscreenlockerrc` under `[Greeter][Wallpaper][org.kde.plasma.cropwallpaper][General]` and synchronized with `kwriteconfig6`.
+
+---
+
+## 6. SDDM Login Screen Wallpaper Application & Privilege Elevation
+
+### 1. Architectural Challenge
+SDDM (Simple Desktop Display Manager) operates outside user session context as a system-level daemon (`root` or `sddm` user). Unlike `plasmashell` or `kscreenlocker`, SDDM:
+1. Does not evaluate Plasma wallpaper packages (`org.kde.plasma.cropwallpaper`).
+2. Requires a physically rendered, static image file.
+3. Requires root privileges to modify theme configurations in `/usr/share/sddm/themes/`.
+
+### 2. Physical Crop Rasterization (`export_cropped_image`)
+When SDDM is selected as a target, `set_wallpaper.py` uses Pillow to calculate the exact pixel crop geometry `[left, top, right, bottom]` based on normalized `[CropX, CropY, CropWidth, CropHeight]`, ensuring sRGB conversion is applied if the source image uses a wide color gamut. The cropped output is rendered to a temporary image with world-readable permissions (`0o644`).
+
+### 3. Active Theme Detection (`get_active_sddm_theme`)
+The backend parses system configuration files in priority order to identify the current active theme:
+1. `/etc/sddm.conf.d/kde_settings.conf`
+2. `/etc/sddm.conf.d/*.conf`
+3. `/etc/sddm.conf`
+4. `/usr/lib/sddm/sddm.conf.d/default.conf`
+5. Fallback: `breeze` or first available folder under `/usr/share/sddm/themes/`.
+
+### 4. Privilege Elevation via PolicyKit (`pkexec`)
+The GUI application never runs as root. Instead, the backend invokes a scoped root helper via `pkexec`:
+
+```bash
+pkexec python3 bin/set_wallpaper.py --internal-sddm-apply <THEME> <TEMP_IMAGE>
+```
+
+The privileged helper routine:
+- Copies the rendered crop into `/usr/share/sddm/themes/<THEME>/plasma_crop_wallpaper.<ext>`.
+- Applies safe permissions (`0o644`).
+- Updates `/usr/share/sddm/themes/<THEME>/theme.conf.user` with `background=plasma_crop_wallpaper.<ext>` and `type=image`.
+- Safely cleans up temporary files upon completion.
+

@@ -62,7 +62,9 @@ def main():
     success_dialog = test_qml_file(engine, "contents/ui/CropDialogWindow.qml")
 
     if success_main and success_config and success_dialog:
-        print("\n[SUCCESS] All QML components compiled and loaded successfully!")
+        print("\n[✓] All QML components compiled and loaded successfully!")
+        import test_sddm
+        test_sddm.main()
         sys.exit(0)
     else:
         print("\n[FAILURE] Errors encountered during QML verification.")
