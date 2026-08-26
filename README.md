@@ -22,7 +22,14 @@ A standalone wallpaper plugin and management utility for KDE Plasma 6 that provi
 
 ## Installation
 
-### Automated Installation
+### Method 1: Via KDE System Settings (Recommended)
+
+1. Right-click your desktop and select **Configure Desktop and Wallpaper...**
+2. Click **Get New Plugins...** / **Get New Wallpapers...**
+3. Search for **Wallpaper Control** and click **Install**.
+4. Select **Wallpaper Control** in the **Wallpaper Type** dropdown.
+
+### Method 2: Automated Installation (from Git)
 
 Run the included installation script to install the wallpaper package and configure the Dolphin context menu:
 
@@ -30,7 +37,7 @@ Run the included installation script to install the wallpaper package and config
 ./install.sh
 ```
 
-### Manual Installation via `kpackagetool6`
+### Method 3: Manual Installation via `kpackagetool6`
 
 ```bash
 # Install package

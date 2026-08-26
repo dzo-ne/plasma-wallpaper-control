@@ -52,6 +52,9 @@ ColumnLayout {
 
     Component.onCompleted: {
         handleImageChange(cfg_Image);
+        if (cfg_ShowContextMenu) {
+            contextMenuSource.connectSource(`python3 "${backendBinPath}" --enable-context-menu`);
+        }
     }
 
     // Hidden probe for the raw source image to detect native color profile reliably
