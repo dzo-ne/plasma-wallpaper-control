@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CLI & Service Menu Helper for KDE Plasma 6 Crop & Pan Wallpaper.
+CLI & Service Menu Helper for KDE Plasma 6 Wallpaper Control.
 Allows setting wallpaper on Desktop, Lockscreen, SDDM Login Screen, or all three,
 launching an interactive cropping window, or toggling Dolphin context menu integration.
 """
@@ -320,7 +320,7 @@ def launch_crop_dialog(image_path):
 
     app = QApplication(sys.argv)
     view = QQuickView()
-    view.setTitle("Crop & Pan Wallpaper Selector")
+    view.setTitle("Wallpaper Control")
     view.setResizeMode(QQuickView.ResizeMode.SizeRootObjectToView)
 
     class Bridge(QObject):
@@ -469,7 +469,7 @@ def launch_crop_dialog(image_path):
     sys.exit(app.exec())
 
 def main():
-    parser = argparse.ArgumentParser(description="Set Crop & Pan wallpaper and manage Dolphin context menu in KDE Plasma 6")
+    parser = argparse.ArgumentParser(description="Set Wallpaper Control wallpaper and manage Dolphin context menu in KDE Plasma 6")
     parser.add_argument("image", nargs="?", default="", help="Path to image file")
     parser.add_argument("--target", choices=["desktop", "lockscreen", "sddm", "both", "all"], default="desktop", help="Where to apply wallpaper (default: desktop)")
     parser.add_argument("--targets", nargs="+", choices=["desktop", "lockscreen", "sddm"], help="Multiple targets to apply wallpaper (e.g. --targets desktop sddm)")

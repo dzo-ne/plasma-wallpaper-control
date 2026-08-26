@@ -1,6 +1,6 @@
 # Frontend Architecture & Design Decisions
 
-This document details the QtQuick/QML frontend architecture, UI layout constraints, interactive canvas geometry, system interactions, and all frontend-specific design choices and intentional omissions for the **Crop & Pan Wallpaper** plugin.
+This document details the QtQuick/QML frontend architecture, UI layout constraints, interactive canvas geometry, system interactions, and all frontend-specific design choices and intentional omissions for the **Wallpaper Control** plugin.
 
 ---
 

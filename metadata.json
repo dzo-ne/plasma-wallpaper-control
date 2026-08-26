@@ -8,7 +8,7 @@
             }
         ],
         "Category": "Image",
-        "Description": "Interactive wallpaper selector with precision pan, zoom, and aspect-ratio crop control",
+        "Description": "Interactive wallpaper management and precision framing with aspect-ratio cropping, pan, zoom, and multi-surface synchronization",
         "Icon": "transform-crop",
         "Id": "org.kde.plasma.cropwallpaper",
         "License": "GPL-3.0-or-later",
@@ -20,7 +20,7 @@
             "image/bmp",
             "image/svg+xml"
         ],
-        "Name": "Crop & Pan",
+        "Name": "Wallpaper Control",
         "Version": "1.1.0",
         "Website": "https://github.com/dzo-ne/plasma-wallpaper-control"
     },

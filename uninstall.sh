@@ -10,7 +10,7 @@ PLUGIN_ID="org.kde.plasma.cropwallpaper"
 SERVICEMENU_FILE="$HOME/.local/share/kio/servicemenus/plasma_crop_wallpaper.desktop"
 INSTALL_DIR="$HOME/.local/share/plasma/wallpapers/$PLUGIN_ID"
 
-echo "==> Uninstalling KDE Plasma 6 Crop & Pan Wallpaper Plugin..."
+echo "==> Uninstalling KDE Plasma 6 Wallpaper Control Plugin..."
 
 # 1. Remove KPackage via kpackagetool6 if installed
 if command -v kpackagetool6 &> /dev/null; then
@@ -44,4 +44,4 @@ if command -v kbuildsycoca6 &> /dev/null; then
 fi
 
 echo ""
-echo "[✓] Crop & Pan Wallpaper plugin successfully uninstalled and original context menu restored!"
+echo "[✓] Wallpaper Control plugin successfully uninstalled and original context menu restored!"

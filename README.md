@@ -1,8 +1,8 @@
-# Crop & Pan Wallpaper Plugin for KDE Plasma 6
+# Wallpaper Control for KDE Plasma 6
 
-A standalone wallpaper plugin for KDE Plasma 6 that provides interactive image selection, panning, zooming, and precision aspect-ratio cropping.
+A standalone wallpaper plugin and management utility for KDE Plasma 6 that provides interactive image selection, panning, zooming, precision aspect-ratio cropping, and multi-surface synchronization.
 
-<img width="1378" height="1038" alt="Crop & Pan Preview" src="https://github.com/user-attachments/assets/79d0687e-7a8a-4f72-88f4-1aeab24d356c" />
+<img width="1378" height="1038" alt="Wallpaper Control Preview" src="https://github.com/user-attachments/assets/79d0687e-7a8a-4f72-88f4-1aeab24d356c" />
 
 ---
 
@@ -52,7 +52,7 @@ kpackagetool6 --type Plasma/Wallpaper --upgrade .
 
 ### 1. From Desktop Settings
 1. Right-click the desktop and select **Configure Desktop and Wallpaper...**
-2. In the **Wallpaper Type** dropdown, select **Crop & Pan**.
+2. In the **Wallpaper Type** dropdown, select **Wallpaper Control**.
 3. Choose an image, adjust the crop box or aspect ratio, and click **Apply**.
 
 ### 2. From Dolphin File Manager

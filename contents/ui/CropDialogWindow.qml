@@ -164,9 +164,9 @@ Rectangle {
             spacing: Kirigami.Units.smallSpacing
 
             Kirigami.Heading {
-                text: "Crop & Pan"
+                text: "Wallpaper Control"
                 level: 2
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 8
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 10
             }
 
             Item { Layout.fillWidth: true } // spacer

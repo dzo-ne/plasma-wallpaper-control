@@ -1,6 +1,6 @@
 # Backend Architecture & Design Decisions
 
-This document details the Python CLI backend, KDE Plasma DBus inter-process communication, ICC color management, cache lifecycle, and dynamic window sizing algorithms for the **Crop & Pan Wallpaper** plugin.
+This document details the Python CLI backend, KDE Plasma DBus inter-process communication, ICC color management, cache lifecycle, and dynamic window sizing algorithms for the **Wallpaper Control** plugin.
 
 ---
 
