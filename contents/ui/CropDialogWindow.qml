@@ -163,14 +163,6 @@ Rectangle {
             Layout.fillWidth: true
             spacing: Kirigami.Units.smallSpacing
 
-            Kirigami.Heading {
-                text: "Wallpaper Control"
-                level: 2
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 10
-            }
-
-            Item { Layout.fillWidth: true } // spacer
-
             QQC2.Label {
                 text: "Aspect Ratio:"
             }
@@ -197,6 +189,8 @@ Rectangle {
                     }
                 }
             }
+
+            Item { Layout.fillWidth: true } // spacer
 
             QQC2.Button {
                 text: "Fit Screen"
