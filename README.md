@@ -2,7 +2,7 @@
 
 A standalone wallpaper plugin and management utility for KDE Plasma 6 that provides interactive image selection, panning, zooming, precision aspect-ratio cropping, and multi-surface synchronization.
 
-<img width="1378" height="1038" alt="Screenshot_20260826_151524" src="https://github.com/user-attachments/assets/0a2fdc9f-6b79-4a7d-a300-4a5c47515e05" />
+<img width="1378" height="1038" alt="Screenshot_20260924_015827" src="https://github.com/user-attachments/assets/70bccdfe-9336-4724-b656-ee45918567d0" />
 
 ## Features
 
