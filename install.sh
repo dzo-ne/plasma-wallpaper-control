@@ -42,9 +42,9 @@ chmod +x "$SET_WALLPAPER_BIN"
 sed "s|@SET_WALLPAPER_BIN@|$SET_WALLPAPER_BIN|g" "$SRC_DIR/servicemenus/plasma_crop_wallpaper.desktop" > "$SERVICEMENU_DIR/plasma_crop_wallpaper.desktop"
 chmod +x "$SERVICEMENU_DIR/plasma_crop_wallpaper.desktop"
 
-# Disable default KDE wallpaperfileitemaction plugin to prevent duplicate entries
+# Ensure default KDE wallpaperfileitemaction plugin is not disabled
 if command -v kwriteconfig6 &> /dev/null; then
-    kwriteconfig6 --file kservicemenurc --group Show --key wallpaperfileitemaction false
+    kwriteconfig6 --file kservicemenurc --group Show --key wallpaperfileitemaction true
 fi
 
 if command -v kbuildsycoca6 &> /dev/null; then
@@ -54,7 +54,6 @@ fi
 echo ""
 echo "[✓] Wallpaper plugin '$PLUGIN_ID' successfully installed/updated!"
 echo "[✓] Dolphin Service Menu installed to: $SERVICEMENU_DIR/plasma_crop_wallpaper.desktop"
-echo "[✓] Replaced default 'Set as Wallpaper' in Dolphin context menu"
 echo ""
 echo "To test this wallpaper in a standalone window, run:"
 echo "    plasmawindowed $PLUGIN_ID"

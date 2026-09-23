@@ -192,8 +192,8 @@ ColumnLayout {
                 ? i18nd("plasma_wallpaper_org.kde.cropwallpaper", "File manager:")
                 : "File manager:"
             text: (typeof i18nd !== "undefined")
-                ? i18nd("plasma_wallpaper_org.kde.cropwallpaper", "Replace default \"Set as Wallpaper\" in Dolphin context menu")
-                : "Replace default \"Set as Wallpaper\" in Dolphin context menu"
+                ? i18nd("plasma_wallpaper_org.kde.cropwallpaper", "Show \"Set as Wallpaper…\" in Dolphin context menu")
+                : "Show \"Set as Wallpaper…\" in Dolphin context menu"
             checked: cfg_ShowContextMenu
             onToggled: {
                 cfg_ShowContextMenu = checked;

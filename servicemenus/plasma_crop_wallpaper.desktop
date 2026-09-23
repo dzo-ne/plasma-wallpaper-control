@@ -4,6 +4,7 @@ ServiceTypes=KonqPopupMenu/Plugin
 MimeType=image/jpeg;image/png;image/webp;image/avif;image/bmp;image/svg+xml;
 Actions=CropAndSet;
 X-KDE-Priority=TopLevel
+TryExec=@SET_WALLPAPER_BIN@
 
 [Desktop Action CropAndSet]
 Name=Set as Wallpaper…

@@ -8,7 +8,7 @@ A standalone wallpaper plugin and management utility for KDE Plasma 6 that provi
 
 - **Interactive Cropping and Panning**: Real-time interactive crop box with 4-corner resizing handles, rule-of-thirds grid, and drag-and-pan positioning.
 - **Screen & Custom Aspect Ratios**: Constrain crops to active display screen proportions (e.g. 16:9, 16:10, 21:9, 4:3, 1:1, 9:16) or freeform dimensions.
-- **Seamless Dolphin Integration**: Seamlessly replaces KDE's default "Set as Wallpaper…" context menu action with the interactive crop & pan selector without cluttering your menu.
+- **Seamless Dolphin Integration**: Integrates directly into Dolphin with a top-level "Set as Wallpaper…" context menu action to open the interactive crop & pan selector.
 - **Desktop, Lockscreen & SDDM Support**: Apply cropped wallpapers directly to the active desktop, lockscreen, SDDM login screen, or all three simultaneously.
 - **Privilege-Aware Elevation**: Uses PolicyKit (`pkexec`) to securely export and configure SDDM login screen wallpapers without running the whole app as root.
 - **Color Profile Awareness**: Automatic detection and on-demand sRGB conversion for wide-gamut images (Display P3, Adobe RGB, Rec. 2020) to prevent desaturated rendering.
