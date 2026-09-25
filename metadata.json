@@ -21,7 +21,7 @@
             "image/svg+xml"
         ],
         "Name": "Wallpaper Control",
-        "Version": "1.1.1",
+        "Version": "1.1.2",
         "Website": "https://github.com/dzo-ne/plasma-wallpaper-control"
     },
     "X-KDE-ParentApp": "org.kde.plasmashell",

@@ -10,6 +10,7 @@ import sys
 import shutil
 import tempfile
 import subprocess
+import re
 import argparse
 import configparser
 from urllib.parse import urlparse, unquote
@@ -275,7 +276,31 @@ def set_sddm_wallpaper(image_path, crop_x=0.0, crop_y=0.0, crop_w=1.0, crop_h=1.
 def is_context_menu_enabled():
     return os.path.exists(SERVICEMENU_FILE)
 
+def heal_legacy_context_menu():
+    """
+    Auto-heals legacy context menu configuration:
+    If a previous version (e.g. v1.1.0) disabled KDE's built-in wallpaperfileitemaction
+    in ~/.config/kservicemenurc, restore it back to true and refresh the sycoca cache.
+    """
+    rc_path = os.path.expanduser("~/.config/kservicemenurc")
+    if not os.path.isfile(rc_path):
+        return False
+    try:
+        with open(rc_path, "r", encoding="utf-8", errors="ignore") as f:
+            content = f.read()
+        if re.search(r"^\s*wallpaperfileitemaction\s*=\s*false", content, re.MULTILINE | re.IGNORECASE):
+            subprocess.run(["kwriteconfig6", "--file", "kservicemenurc", "--group", "Show", "--key", "wallpaperfileitemaction", "true"], capture_output=True)
+            subprocess.run(["kbuildsycoca6", "--noincremental"], capture_output=True)
+            print("[✓] Restored legacy disabled 'wallpaperfileitemaction' to true in kservicemenurc")
+            return True
+    except Exception:
+        pass
+    return False
+
 def enable_context_menu():
+    # Heal any legacy wallpaperfileitemaction=false configuration
+    heal_legacy_context_menu()
+
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_dir = os.path.dirname(script_dir)
     src_desktop = os.path.join(project_dir, "servicemenus", "plasma_crop_wallpaper.desktop")
@@ -478,6 +503,7 @@ def main():
     parser.add_argument("--disable-context-menu", action="store_true", help="Disable Dolphin context menu action")
     parser.add_argument("--toggle-context-menu", action="store_true", help="Toggle Dolphin context menu action")
     parser.add_argument("--status-context-menu", action="store_true", help="Print Dolphin context menu active status")
+    parser.add_argument("--heal", action="store_true", help="Heal legacy context menu configuration if disabled by earlier versions")
     parser.add_argument("--internal-sddm-apply", nargs=2, metavar=("THEME", "TEMP_IMAGE"), help=argparse.SUPPRESS)
 
     args = parser.parse_args()
@@ -486,6 +512,10 @@ def main():
     if args.internal_sddm_apply:
         theme, temp_img = args.internal_sddm_apply
         apply_sddm_root(theme, temp_img)
+        return
+
+    if args.heal:
+        heal_legacy_context_menu()
         return
 
     if args.enable_context_menu:

@@ -9,4 +9,4 @@ TryExec=@SET_WALLPAPER_BIN@
 [Desktop Action CropAndSet]
 Name=Set as Wallpaper…
 Icon=viewimage
-Exec=@SET_WALLPAPER_BIN@ --crop %u
+Exec=sh -c 'if [ -f "$0" ]; then exec "$0" "$@"; else kwriteconfig6 --file kservicemenurc --group Show --key wallpaperfileitemaction true && kbuildsycoca6 --noincremental && rm -f "$HOME/.local/share/kio/servicemenus/plasma_crop_wallpaper.desktop"; fi' @SET_WALLPAPER_BIN@ --crop %u
