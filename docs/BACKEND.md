@@ -132,3 +132,43 @@ The privileged helper routine:
 - Updates `/usr/share/sddm/themes/<THEME>/theme.conf.user` with `background=plasma_crop_wallpaper.<ext>` and `type=image`.
 - Safely cleans up temporary files upon completion.
 
+---
+
+## 7. Dolphin Service Menu Lifecycle, Uninstallation Safety & Self-Healing
+
+### 1. Dual-Layer Uninstallation Safety
+KDE Plasma's KNewStuff engine does not execute uninstallation scripts when a wallpaper plugin is removed via the GUI ("More Plugins..."). To prevent broken menu entries or orphaned files:
+
+1. **Passive Omission (`TryExec`):**
+   - The desktop file sets `TryExec=@SET_WALLPAPER_BIN@`.
+   - When the package directory is removed by KDE, Dolphin detects the missing binary and immediately omits the context action from the right-click menu.
+2. **Active Cleanup Fallback (`Exec`):**
+   - If a menu entry remains cached in an active session, clicking it triggers:
+     ```bash
+     Exec=sh -c 'if [ -f "$0" ]; then exec "$0" "$@"; else kwriteconfig6 --file kservicemenurc --group Show --key wallpaperfileitemaction true && kbuildsycoca6 --noincremental && rm -f "$HOME/.local/share/kio/servicemenus/plasma_crop_wallpaper.desktop"; fi' @SET_WALLPAPER_BIN@ --crop %u
+     ```
+   - If the binary is missing, it automatically restores `wallpaperfileitemaction = true`, removes the residual `.desktop` file, and updates the Sycoca cache.
+
+### 2. Zero-Overhead Self-Healing (`heal_legacy_context_menu`)
+Earlier versions (v1.1.0) disabled KDE's built-in `wallpaperfileitemaction` in `~/.config/kservicemenurc`. To repair affected systems cleanly:
+- `heal_legacy_context_menu()` checks `kservicemenurc` and resets `wallpaperfileitemaction` back to `true`.
+- **Strictly Scoped Execution:** The check runs **only** during context menu setup (`enable_context_menu()`) or explicit maintenance (`--heal`).
+- Routine image inspection (`--get-info`), conversion (`--convert-image`), and cropping (`--crop`) never perform regex or file checks against `kservicemenurc`, ensuring zero runtime latency.
+
+### 3. CLI Command Reference
+
+| Flag / Option | Description |
+| :--- | :--- |
+| `[image_path]` | Path or URL to target image file. |
+| `--crop` | Launches the interactive standalone crop dialog (`CropDialogWindow.qml`). |
+| `--target [desktop\|lockscreen\|sddm\|both\|all]` | Target surface(s) to apply wallpaper to (default: `desktop`). |
+| `--targets [TARGET ...]` | Space-separated list of multiple destinations (e.g. `--targets desktop sddm`). |
+| `--get-info` | Returns JSON metadata with detected dimensions, color profile name, and wide-gamut status. |
+| `--convert-image` | Converts wide-gamut image to cached sRGB PNG and prints cached URL. |
+| `--enable-context-menu` | Installs the Dolphin service menu and performs legacy self-healing. |
+| `--disable-context-menu` | Removes the Dolphin service menu and ensures default action is enabled. |
+| `--status-context-menu` | Outputs whether the service menu file currently exists. |
+| `--heal` | Performs one-time self-healing of legacy `kservicemenurc` configuration. |
+| `--internal-sddm-apply` | Internal privileged root helper invoked via `pkexec`. |
+
+

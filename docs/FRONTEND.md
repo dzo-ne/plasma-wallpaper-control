@@ -80,15 +80,20 @@ Both `config.qml` and `CropDialogWindow.qml` use a **stacked dual-layer image ar
 
 ## 4. UI Layout & Responsive Sizing Constraints
 
-To prevent horizontal clipping and ensure all action buttons are visible across varied window dimensions:
+To prevent horizontal clipping and ensure all action controls remain accessible across varied window dimensions:
 
-1. **Dedicated Warning Row:**
-   - The Display P3 warning label uses `wrapMode: Text.WordWrap` and `Layout.fillWidth: true`.
-   - Never place long warning text and action buttons on the same unconstrained `RowLayout`.
-2. **Compact Action Row:**
-   - Resolution/crop information is positioned on the left (`Layout.alignment: Qt.AlignLeft`).
-   - Action buttons (`Cancel`, `Set on Desktop`, `Set on Lockscreen`, `Set on Both`) are grouped on the right with an expanding spacer (`Item { Layout.fillWidth: true }`).
-   - Total minimum width required by this row is ~700px, fitting comfortably inside the 850px minimum window width.
+1. **Top Controls Bar Layout:**
+   - **Streamlined Design:** The inner `"Wallpaper Control"` heading is omitted from the toolbar to avoid duplicating the window title bar and to eliminate horizontal crowding.
+   - **Visual Hierarchy:** The Aspect Ratio dropdown is positioned on the left (`Layout.alignment: Qt.AlignLeft`), followed by an expanding spacer, with positioning actions (`Fit Screen`, `Center`, `Reset`) cleanly grouped on the right.
+2. **Dedicated Color Warning Row:**
+   - The wide-gamut / Display P3 warning label uses `wrapMode: Text.WordWrap` and `Layout.fillWidth: true`.
+   - Placed in its own dedicated row to prevent displacing canvas elements or action controls.
+3. **Unified Destination Action Row:**
+   - Crop resolution badge and inline error reporting are aligned on the left.
+   - Destination targets (`[ ] Desktop`, `[ ] Lockscreen`, `[ ] Login Screen (SDDM)`) are rendered as checkboxes (untoggled by default to prevent accidental overwrites).
+   - An inline `QQC2.BusyIndicator` provides visual feedback during PolicyKit authentication and file generation.
+   - Action buttons (`Cancel` and `Apply`) are grouped on the far right. The `Apply` button dynamically enables only when at least one destination checkbox is selected.
+   - The layout comfortably fits within the minimum 850px window constraint.
 
 ---
 
