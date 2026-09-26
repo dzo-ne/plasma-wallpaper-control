@@ -13,7 +13,7 @@ import subprocess
 import re
 import argparse
 import configparser
-from urllib.parse import urlparse, unquote
+from urllib.parse import quote, unquote
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
@@ -36,17 +36,24 @@ except ImportError:
 SERVICEMENU_DIR = os.path.expanduser("~/.local/share/kio/servicemenus")
 SERVICEMENU_FILE = os.path.join(SERVICEMENU_DIR, "plasma_crop_wallpaper.desktop")
 
-def to_file_url(path):
-    if path.startswith("file://"):
-        return path
-    abs_path = os.path.abspath(os.path.expanduser(path))
-    return f"file://{abs_path}"
-
 def from_file_url(url_or_path):
-    if url_or_path.startswith("file://"):
-        parsed = urlparse(url_or_path)
-        return unquote(parsed.path)
-    return os.path.abspath(os.path.expanduser(url_or_path))
+    if not url_or_path:
+        return ""
+    s = str(url_or_path)
+    if s.startswith("file://localhost/"):
+        raw_path = unquote(s[16:])
+    elif s.startswith("file://"):
+        raw_path = unquote(s[7:])
+    else:
+        raw_path = s
+    return os.path.abspath(os.path.expanduser(raw_path))
+
+def to_file_url(path):
+    if not path:
+        return ""
+    local_path = from_file_url(path)
+    encoded_path = quote(local_path, safe="/:@&+$,~-_.!*'")
+    return f"file://{encoded_path}"
 
 def export_cropped_image(image_path, crop_x=0.0, crop_y=0.0, crop_w=1.0, crop_h=1.0, output_path=None):
     """

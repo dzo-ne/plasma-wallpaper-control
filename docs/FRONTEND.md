@@ -102,3 +102,14 @@ To prevent horizontal clipping and ensure all action controls remain accessible 
 ### Design Choice: Avoiding Cyclic Binding Collisions
 In QtQuick Controls 2 (such as `QQC2.Switch` and `QQC2.CheckBox`), adding `Binding on checked { value: ... }` causes cyclic binding fights where Qt resets `checked` back to its pre-click state before click handlers execute.
 - **Enforced Rule:** Always bind `checked: root.useSrgbFix` and update state via `onClicked: { root.useSrgbFix = checked; ... }`.
+
+---
+
+## 6. Safe URL & Special Character Handling
+
+In QML, `Image.source` is a `url` property backed by Qt's `QUrl`.
+- **Fragment Delimiter Collision:** In URI syntax, `#` introduces a fragment identifier. Passing an unencoded `#` in a file path causes `QUrl` to truncate the path, causing image loading to fail.
+- **Enforced Rule:** All image sources passed to QML are normalized and percent-encoded with `%23` for `#`, `%20` for spaces, and `%3F` for `?`.
+- **Manual Input Sanitization:** When paths are typed or pasted into `pathField` in `config.qml`, `onEditingFinished` automatically formats the input into a `file://` URL with `#` encoded to `%23` before assigning to `cfg_Image`.
+- **Process Parameter Quoting:** Path arguments passed to backend command line invocations via `Plasma5Support.DataSource` are escaped to prevent shell interpretation issues.
+

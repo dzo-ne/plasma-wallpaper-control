@@ -171,4 +171,23 @@ Earlier versions (v1.1.0) disabled KDE's built-in `wallpaperfileitemaction` in `
 | `--heal` | Performs one-time self-healing of legacy `kservicemenurc` configuration. |
 | `--internal-sddm-apply` | Internal privileged root helper invoked via `pkexec`. |
 
+---
+
+## 8. Safe URL & Path Handling (Special Characters & Fragments)
+
+### 1. The Fragment Identifier Collision
+In standard URI syntax (RFC 3986), `#` introduces a fragment identifier (anchor).
+- **Failure Mode:** When unencoded `file:///path/to/image #08.jpg` URLs were passed to Qt Quick's `Image` element or Python's `urlparse()`, everything following `#` was stripped as a fragment identifier. Qt Quick attempted to open `/path/to/image `, which did not exist on disk, causing `QQuickImage: Cannot open` errors and displaying a blank preview canvas.
+
+### 2. Idempotent Encoding & Decoding Pipeline
+- **`to_file_url(path)`:**
+  Standardizes input paths and encodes them using `urllib.parse.quote(local_path, safe="/:@&+$,~-_.!*'")`.
+  Special characters (`#` $\rightarrow$ `%23`, `?` $\rightarrow$ `%3F`, spaces $\rightarrow$ `%20`) are safely escaped, guaranteeing that `QUrl::toLocalFile()` resolves the exact, unabridged filesystem path without fragment truncation.
+- **`from_file_url(url_or_path)`:**
+  Extracts and resolves physical filesystem paths.
+  Only strips and unquotes `file://` or `file://localhost/` prefixes, leaving raw local paths containing literal `%` characters (e.g. `/path/to/100% pure.png`) intact without double-decoding or corruption.
+- **DBus & Configuration Parity:**
+  Desktop (`evaluateScript`) and Lockscreen (`kwriteconfig6`) configuration updates always store percent-encoded `to_file_url()` values, ensuring Plasma's desktop wallpaper item loads images with `#` without displaying a black fallback matte.
+
+
 

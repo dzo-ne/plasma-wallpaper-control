@@ -218,12 +218,20 @@ ColumnLayout {
                 placeholderText: i18nd("plasma_wallpaper_org.kde.cropwallpaper", "Choose an image file...")
                 onEditingFinished: {
                     if (text !== rawImagePath && text !== cfg_Image) {
-                        rawImagePath = text;
+                        let formatted = text.trim();
+                        if (formatted.length > 0) {
+                            if (!formatted.startsWith("file://")) {
+                                formatted = "file://" + encodeURI(formatted).replace(/#/g, "%23");
+                            } else {
+                                formatted = formatted.replace(/#/g, "%23");
+                            }
+                        }
+                        rawImagePath = formatted;
                         srgbImagePath = "";
                         useSrgbFix = false;
                         detectedProfileName = "";
                         isWideGamutImage = false;
-                        cfg_Image = text;
+                        cfg_Image = formatted;
                     }
                 }
             }
@@ -798,7 +806,8 @@ ColumnLayout {
     function queryImageMetadata(imagePath) {
         if (!imagePath) return;
         const cleanPath = imagePath.startsWith("file://") ? imagePath.slice(7) : imagePath;
-        const cmd = `python3 "${backendBinPath}" --get-info "${cleanPath}"`;
+        const escapedPath = cleanPath.replace(/"/g, '\\"');
+        const cmd = `python3 "${backendBinPath}" --get-info "${escapedPath}"`;
         metadataSource.connectSource(cmd);
     }
 
@@ -810,7 +819,8 @@ ColumnLayout {
         if (!rawImagePath) return;
         isConverting = true;
         const cleanPath = rawImagePath.startsWith("file://") ? rawImagePath.slice(7) : rawImagePath;
-        const cmd = `python3 "${backendBinPath}" --convert-image "${cleanPath}"`;
+        const escapedPath = cleanPath.replace(/"/g, '\\"');
+        const cmd = `python3 "${backendBinPath}" --convert-image "${escapedPath}"`;
         colorConvertSource.connectSource(cmd);
     }
 
