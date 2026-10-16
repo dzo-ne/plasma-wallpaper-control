@@ -73,6 +73,37 @@ def test_config_logic():
     assert QUrl(re_encoded).toLocalFile() == decoded_display
     print(f"[✓] Display path decoding & re-encoding passed: {decoded_display}")
 
+    # Test that opening settings with existing config does not mutate any cfg_* properties (no false unsaved changes)
+    from PyQt6.QtCore import QEventLoop, QTimer
+    from PyQt6.QtGui import QImage
+    test_img_path = "/tmp/test_wallpaper_unsaved_check.png"
+    img = QImage(800, 1000, QImage.Format.Format_RGB32)
+    img.fill(0x224466)
+    img.save(test_img_path)
+
+    initial_props = {
+        "cfg_Image": f"file://{test_img_path}",
+        "cfg_CropX": 0.1,
+        "cfg_CropY": 0.2,
+        "cfg_CropWidth": 0.8,
+        "cfg_CropHeight": 0.6,
+        "cfg_AspectRatioMode": 0,
+        "cfg_ShowContextMenu": True,
+    }
+    loaded_obj = component.createWithInitialProperties(initial_props)
+    assert loaded_obj is not None, "Failed to create config.qml with initial properties"
+    loop = QEventLoop()
+    QTimer.singleShot(250, loop.quit)
+    loop.exec()
+    for k, expected in initial_props.items():
+        actual = loaded_obj.property(k)
+        if isinstance(expected, float):
+            assert abs(actual - expected) < 1e-9, f"{k} mutated on load: {expected} -> {actual}"
+        else:
+            assert actual == expected, f"{k} mutated on load: {expected} -> {actual}"
+    os.remove(test_img_path)
+    print("[✓] Initial config load preserves all cfg_* properties without false unsaved changes")
+
     print("[SUCCESS] All functional logic tests passed!")
     return True
 

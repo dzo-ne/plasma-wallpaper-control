@@ -23,6 +23,7 @@ ColumnLayout {
     property string detectedProfileName: ""
     property bool isWideGamutImage: false
     property bool isConverting: false
+    property bool pendingNewImageFit: false
 
     readonly property bool isConvertedImage: cfg_Image.includes("/plasma-crop-wallpaper/converted/") || cfg_Image.includes("_srgb.png")
 
@@ -192,14 +193,18 @@ ColumnLayout {
         onAccepted: {
             if (fileDialog.selectedFile) {
                 const pathStr = fileDialog.selectedFile.toString();
+                pendingNewImageFit = true;
                 rawImagePath = pathStr;
                 srgbImagePath = "";
                 useSrgbFix = false;
                 detectedProfileName = "";
                 isWideGamutImage = false;
                 cfg_Image = pathStr;
-                // Automatically initialize crop to fill screen aspect ratio when a new image is picked
-                fitToScreenCrop(true);
+                // If already ready synchronously (cached), fit immediately; otherwise onStatusChanged handles it
+                if (rawPreviewImage.status === Image.Ready && rawPreviewImage.implicitWidth > 0 && rawPreviewImage.implicitHeight > 0) {
+                    pendingNewImageFit = false;
+                    fitToScreenCrop(true);
+                }
             }
         }
     }
@@ -253,12 +258,17 @@ ColumnLayout {
                     const currentDisplay = formatDisplayPath((rawImagePath.length > 0) ? rawImagePath : cfg_Image);
                     if (text.trim() !== currentDisplay && text !== rawImagePath && text !== cfg_Image) {
                         const formatted = toEncodedFileUrl(text);
+                        pendingNewImageFit = true;
                         rawImagePath = formatted;
                         srgbImagePath = "";
                         useSrgbFix = false;
                         detectedProfileName = "";
                         isWideGamutImage = false;
                         cfg_Image = formatted;
+                        if (rawPreviewImage.status === Image.Ready && rawPreviewImage.implicitWidth > 0 && rawPreviewImage.implicitHeight > 0) {
+                            pendingNewImageFit = false;
+                            fitToScreenCrop(true);
+                        }
                     }
                 }
             }
@@ -355,11 +365,9 @@ ColumnLayout {
             onStatusChanged: {
                 if (status === Image.Ready && implicitWidth > 0 && implicitHeight > 0) {
                     root.lastImageAspect = implicitWidth / implicitHeight;
-                    // If dimensions are uninitialized, fit to screen
-                    if (cfg_CropWidth <= 0.0 || cfg_CropHeight <= 0.0 || (cfg_CropWidth === 1.0 && cfg_CropHeight === 1.0 && cfg_CropX === 0.0 && cfg_CropY === 0.0)) {
+                    if (root.pendingNewImageFit || cfg_CropWidth <= 0.0 || cfg_CropHeight <= 0.0) {
+                        root.pendingNewImageFit = false;
                         fitToScreenCrop(true);
-                    } else {
-                        enforceCurrentAspectRatio();
                     }
                 }
             }
@@ -805,12 +813,11 @@ ColumnLayout {
                 }
                 if (meta.is_converted) {
                     useSrgbFix = true;
-                }
-                if (meta.original_url) {
-                    rawImagePath = meta.original_url;
-                    if (!useSrgbFix && cfg_Image !== meta.original_url) {
-                        cfg_Image = meta.original_url;
+                    if (meta.original_url) {
+                        rawImagePath = meta.original_url;
                     }
+                } else if (meta.original_url && rawPreviewImage.status === Image.Error) {
+                    rawImagePath = meta.original_url;
                 }
             } catch (e) {}
         }
