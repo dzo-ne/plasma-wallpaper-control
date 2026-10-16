@@ -65,6 +65,14 @@ def test_config_logic():
     assert obj.property('cfg_CropWidth') == 1.0
     assert obj.property('cfg_CropHeight') == 1.0
 
+    # Test formatDisplayPath and toEncodedFileUrl
+    encoded_sample = "file:///tmp/Sample%20%5Btag%5D%20%28artist%29%20%2308%20original.png"
+    decoded_display = obj.formatDisplayPath(encoded_sample)
+    assert decoded_display == "/tmp/Sample [tag] (artist) #08 original.png", f"Unexpected display path: {decoded_display}"
+    re_encoded = obj.toEncodedFileUrl(decoded_display)
+    assert QUrl(re_encoded).toLocalFile() == decoded_display
+    print(f"[✓] Display path decoding & re-encoding passed: {decoded_display}")
+
     print("[SUCCESS] All functional logic tests passed!")
     return True
 

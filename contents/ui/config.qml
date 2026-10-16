@@ -26,6 +26,33 @@ ColumnLayout {
 
     readonly property bool isConvertedImage: cfg_Image.includes("/plasma-crop-wallpaper/converted/") || cfg_Image.includes("_srgb.png")
 
+    function formatDisplayPath(urlOrPath) {
+        if (!urlOrPath || urlOrPath.length === 0) return "";
+        let p = urlOrPath;
+        if (p.startsWith("file://localhost/")) {
+            p = p.slice(16);
+        } else if (p.startsWith("file://")) {
+            p = p.slice(7);
+        }
+        try {
+            return decodeURIComponent(p);
+        } catch (e) {
+            return p;
+        }
+    }
+
+    function toEncodedFileUrl(inputStr) {
+        if (!inputStr) return "";
+        let trimmed = inputStr.trim();
+        if (trimmed.length === 0) return "";
+        let rawPath = formatDisplayPath(trimmed);
+        return "file://" + encodeURI(rawPath)
+            .replace(/#/g, "%23")
+            .replace(/\?/g, "%3F")
+            .replace(/\[/g, "%5B")
+            .replace(/\]/g, "%5D");
+    }
+
     function handleImageChange(newImg) {
         if (!newImg || newImg.length === 0) return;
         const isConverted = newImg.includes("/plasma-crop-wallpaper/converted/") || newImg.includes("_srgb.png");
@@ -214,18 +241,18 @@ ColumnLayout {
             QQC2.TextField {
                 id: pathField
                 Layout.fillWidth: true
-                text: (rawImagePath.length > 0) ? rawImagePath : cfg_Image
+                text: formatDisplayPath((rawImagePath.length > 0) ? rawImagePath : cfg_Image)
                 placeholderText: i18nd("plasma_wallpaper_org.kde.cropwallpaper", "Choose an image file...")
+
+                Binding on text {
+                    when: !pathField.activeFocus
+                    value: formatDisplayPath((rawImagePath.length > 0) ? rawImagePath : cfg_Image)
+                }
+
                 onEditingFinished: {
-                    if (text !== rawImagePath && text !== cfg_Image) {
-                        let formatted = text.trim();
-                        if (formatted.length > 0) {
-                            if (!formatted.startsWith("file://")) {
-                                formatted = "file://" + encodeURI(formatted).replace(/#/g, "%23");
-                            } else {
-                                formatted = formatted.replace(/#/g, "%23");
-                            }
-                        }
+                    const currentDisplay = formatDisplayPath((rawImagePath.length > 0) ? rawImagePath : cfg_Image);
+                    if (text.trim() !== currentDisplay && text !== rawImagePath && text !== cfg_Image) {
+                        const formatted = toEncodedFileUrl(text);
                         rawImagePath = formatted;
                         srgbImagePath = "";
                         useSrgbFix = false;

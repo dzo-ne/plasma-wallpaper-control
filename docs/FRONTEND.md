@@ -109,7 +109,8 @@ In QtQuick Controls 2 (such as `QQC2.Switch` and `QQC2.CheckBox`), adding `Bindi
 
 In QML, `Image.source` is a `url` property backed by Qt's `QUrl`.
 - **Fragment Delimiter Collision:** In URI syntax, `#` introduces a fragment identifier. Passing an unencoded `#` in a file path causes `QUrl` to truncate the path, causing image loading to fail.
-- **Enforced Rule:** All image sources passed to QML are normalized and percent-encoded with `%23` for `#`, `%20` for spaces, and `%3F` for `?`.
-- **Manual Input Sanitization:** When paths are typed or pasted into `pathField` in `config.qml`, `onEditingFinished` automatically formats the input into a `file://` URL with `#` encoded to `%23` before assigning to `cfg_Image`.
-- **Process Parameter Quoting:** Path arguments passed to backend command line invocations via `Plasma5Support.DataSource` are escaped to prevent shell interpretation issues.
+- **Enforced Rule:** All image sources (`cfg_Image` / `rawImagePath`) passed to QML `Image` items are normalized and percent-encoded (`#` $\rightarrow$ `%23`, spaces $\rightarrow$ `%20`, `?` $\rightarrow$ `%3F`, `[` $\rightarrow$ `%5B`, `]` $\rightarrow$ `%5D`).
+- **Decoded Display Path (`pathField`):** While internal properties remain percent-encoded `file://` URIs, `pathField` binds its displayed text through `formatDisplayPath()` (with an active `Binding` when unfocused), stripping `file://` and decoding `%xx` sequences via `decodeURIComponent()` so users see a clean filesystem path (e.g., `/path/to/Image [q] (author).png`).
+- **Manual Input Sanitization:** When paths are typed or pasted into `pathField` in `config.qml`, `onEditingFinished` compares against the decoded display string and uses `toEncodedFileUrl()` to encode the input back into a valid `file://` URI before assigning to `cfg_Image`.
+- **Process Parameter Quoting:** Full `file://` URLs passed to backend command line invocations via `Plasma5Support.DataSource` preserve their scheme prefix and escape quotes to prevent shell interpretation issues or double-encoding.
 
