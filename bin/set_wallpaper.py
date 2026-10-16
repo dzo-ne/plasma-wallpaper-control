@@ -46,7 +46,12 @@ def from_file_url(url_or_path):
         raw_path = unquote(s[7:])
     else:
         raw_path = s
-    return os.path.abspath(os.path.expanduser(raw_path))
+    resolved = os.path.abspath(os.path.expanduser(raw_path))
+    if not os.path.exists(resolved):
+        unquoted = os.path.abspath(os.path.expanduser(unquote(raw_path)))
+        if unquoted != resolved and os.path.exists(unquoted):
+            return unquoted
+    return resolved
 
 def to_file_url(path):
     if not path:

@@ -800,13 +800,12 @@ ColumnLayout {
 
     readonly property string backendBinPath: {
         const resolved = Qt.resolvedUrl("../../bin/set_wallpaper.py").toString();
-        return resolved.startsWith("file://") ? resolved.slice(7) : resolved;
+        return resolved.startsWith("file://") ? decodeURIComponent(resolved.slice(7)) : resolved;
     }
 
     function queryImageMetadata(imagePath) {
         if (!imagePath) return;
-        const cleanPath = imagePath.startsWith("file://") ? imagePath.slice(7) : imagePath;
-        const escapedPath = cleanPath.replace(/"/g, '\\"');
+        const escapedPath = imagePath.replace(/"/g, '\\"');
         const cmd = `python3 "${backendBinPath}" --get-info "${escapedPath}"`;
         metadataSource.connectSource(cmd);
     }
@@ -818,8 +817,7 @@ ColumnLayout {
         }
         if (!rawImagePath) return;
         isConverting = true;
-        const cleanPath = rawImagePath.startsWith("file://") ? rawImagePath.slice(7) : rawImagePath;
-        const escapedPath = cleanPath.replace(/"/g, '\\"');
+        const escapedPath = rawImagePath.replace(/"/g, '\\"');
         const cmd = `python3 "${backendBinPath}" --convert-image "${escapedPath}"`;
         colorConvertSource.connectSource(cmd);
     }

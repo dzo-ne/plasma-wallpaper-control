@@ -19,6 +19,7 @@ def test_url_handling():
 
     test_paths = [
         "/tmp/Wallpapers/Collection/2026-08-25 -- Photo Sample #08 -- image.jpg",
+        "/tmp/Sample-123 [tag] artwork_(artist) original.png",
         "/tmp/wallpaper sample with spaces #01.png",
         "/tmp/question?mark#hash.jpg",
         "/tmp/percentage %20 literal % test.png",
@@ -44,20 +45,32 @@ def test_url_handling():
     assert from_file_url(raw) == raw
     assert from_file_url("file:///tmp/foo #08.jpg") == raw
 
-    # Test export_cropped_image on file path with #
-    special_img_path = os.path.join(tempfile.gettempdir(), "test #08 -- crop.png")
+    # Test export_cropped_image and double-encoding prevention on file path with #, [], ()
+    special_img_path = os.path.join(tempfile.gettempdir(), "Sample [tag] (artist) #08 -- crop.png")
     test_img = Image.new("RGB", (200, 200), color=(0, 0, 255))
     test_img.save(special_img_path)
     try:
+        single_url = to_file_url(special_img_path)
+        assert "%25" not in single_url
+        # Stripped file:// prefix (still percent-encoded) must resolve back to physical file without double-encoding
+        stripped_encoded = single_url[7:]
+        assert from_file_url(stripped_encoded) == special_img_path
+        assert to_file_url(stripped_encoded) == single_url
+        # Double-encoded file:// URL must self-heal back to single_url
+        from urllib.parse import quote
+        double_url = "file://" + quote(stripped_encoded, safe="/:@&+$,~-_.!*'")
+        assert from_file_url(double_url) == special_img_path
+        assert to_file_url(double_url) == single_url
+
         # Pass as encoded file URL
-        out = export_cropped_image(to_file_url(special_img_path), 0.0, 0.0, 1.0, 1.0)
+        out = export_cropped_image(single_url, 0.0, 0.0, 1.0, 1.0)
         assert os.path.isfile(out)
         os.remove(out)
         # Pass as raw path
         out2 = export_cropped_image(special_img_path, 0.0, 0.0, 1.0, 1.0)
         assert os.path.isfile(out2)
         os.remove(out2)
-        print("  [✓] URL encoding and special character export passed")
+        print("  [✓] URL encoding, double-encoding prevention, and special character export passed")
     finally:
         if os.path.isfile(special_img_path):
             os.remove(special_img_path)
