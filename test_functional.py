@@ -10,6 +10,7 @@ from PyQt6.QtWidgets import QApplication
 from PyQt6.QtQml import QQmlApplicationEngine, QQmlComponent
 from PyQt6.QtCore import QUrl, QTimer
 from PyQt6.QtGui import QImage, QColor, QPainter
+from PyQt6.QtQuick import QQuickWindow, QQuickItem
 
 def create_dummy_images():
     # 1. 16:9 3840x2160
@@ -103,6 +104,24 @@ def test_config_logic():
             assert actual == expected, f"{k} mutated on load: {expected} -> {actual}"
     os.remove(test_img_path)
     print("[✓] Initial config load preserves all cfg_* properties without false unsaved changes")
+
+    # Test window-proportional canvasHeight scaling
+    from PyQt6.QtQuick import QQuickWindow, QQuickItem
+    detached_h = obj.property("canvasHeight")
+    assert detached_h >= 468.0, f"Expected minHeight >= 468, got {detached_h}"
+    assert obj.property("windowHeight") == 0.0
+
+    test_win = QQuickWindow()
+    test_win.setWidth(1024)
+    test_win.setHeight(768)
+    obj.setParentItem(test_win.contentItem())
+    assert obj.property("windowHeight") == 768.0
+    assert obj.property("canvasHeight") == 576.0, f"Expected 576.0 (75% of 768), got {obj.property('canvasHeight')}"
+
+    test_win.setHeight(1080)
+    assert obj.property("windowHeight") == 1080.0
+    assert obj.property("canvasHeight") == 810.0, f"Expected 810.0 (75% of 1080), got {obj.property('canvasHeight')}"
+    print("[✓] Responsive canvasHeight scales dynamically with window size")
 
     print("[SUCCESS] All functional logic tests passed!")
     return True

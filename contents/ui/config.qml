@@ -4,6 +4,7 @@
 */
 
 import QtQuick
+import QtQuick.Window
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import QtQuick.Dialogs as QtDialogs
@@ -141,15 +142,26 @@ ColumnLayout {
     // Cache last valid image aspect ratio to prevent canvas height collapse/jump during reloads
     property real lastImageAspect: 1.7777777777777777
 
+    // Attached window height when loaded inside a window (e.g. Plasma Settings dialog)
+    readonly property real windowHeight: (Window.window && Window.window.height > 0) ? Window.window.height : 0
+
     readonly property real canvasHeight: {
         const aspect = (rawPreviewImage.status === Image.Ready && rawPreviewImage.implicitWidth > 0 && rawPreviewImage.implicitHeight > 0)
             ? (rawPreviewImage.implicitWidth / rawPreviewImage.implicitHeight)
             : root.lastImageAspect;
+
+        const minHeight = Math.round(Kirigami.Units.gridUnit * 26);
+        if (root.windowHeight > 0) {
+            const portraitFactor = (aspect < 1.0) ? Math.min(1.0, (1.0 - aspect) / 0.5) : 0.0;
+            const targetFraction = 0.75 + 0.10 * portraitFactor;
+            const proportionalHeight = Math.round(root.windowHeight * targetFraction);
+            return Math.max(minHeight, proportionalHeight);
+        }
         if (aspect < 1.0) {
             const portraitFactor = Math.min(1.0, (1.0 - aspect) / 0.5);
-            return Math.round(Kirigami.Units.gridUnit * (24 + 12 * portraitFactor));
+            return Math.round(Kirigami.Units.gridUnit * (26 + 12 * portraitFactor));
         }
-        return Math.round(Kirigami.Units.gridUnit * 24);
+        return minHeight;
     }
 
     // Non-sRGB / Wide Gamut Color Space Detection
@@ -342,9 +354,10 @@ ColumnLayout {
     Rectangle {
         id: canvasFrame
         Layout.fillWidth: true
+        Layout.fillHeight: true
+        Layout.minimumHeight: root.canvasHeight
         Layout.preferredHeight: root.canvasHeight
         implicitHeight: root.canvasHeight
-        height: root.canvasHeight
         color: "#181818"
         radius: Kirigami.Units.smallSpacing
         border.color: Kirigami.Theme.separatorColor ? Kirigami.Theme.separatorColor : "#333333"
@@ -469,10 +482,15 @@ ColumnLayout {
                     z: -1
                     acceptedButtons: Qt.NoButton
                     onWheel: (wheel) => {
-                        const zoomStep = wheel.angleDelta.y > 0 ? 0.94 : 1.06;
-                        const mouseNormX = (wheel.x - viewport.dispX) / viewport.dispW;
-                        const mouseNormY = (wheel.y - viewport.dispY) / viewport.dispH;
-                        zoomCrop(zoomStep, mouseNormX, mouseNormY);
+                        if (wheel.modifiers & Qt.ControlModifier) {
+                            wheel.accepted = true;
+                            const zoomStep = wheel.angleDelta.y > 0 ? 0.94 : 1.06;
+                            const mouseNormX = (wheel.x - viewport.dispX) / viewport.dispW;
+                            const mouseNormY = (wheel.y - viewport.dispY) / viewport.dispH;
+                            zoomCrop(zoomStep, mouseNormX, mouseNormY);
+                        } else {
+                            wheel.accepted = false;
+                        }
                     }
                 }
 

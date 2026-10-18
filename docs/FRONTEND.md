@@ -114,3 +114,16 @@ In QML, `Image.source` is a `url` property backed by Qt's `QUrl`.
 - **Manual Input Sanitization:** When paths are typed or pasted into `pathField` in `config.qml`, `onEditingFinished` compares against the decoded display string and uses `toEncodedFileUrl()` to encode the input back into a valid `file://` URI before assigning to `cfg_Image`.
 - **Process Parameter Quoting:** Full `file://` URLs passed to backend command line invocations via `Plasma5Support.DataSource` preserve their scheme prefix and escape quotes to prevent shell interpretation issues or double-encoding.
 
+---
+
+## 7. Responsive Canvas Sizing & Page Scroll Navigation in Settings
+
+In the KDE Plasma Wallpaper Settings dialog (`config.qml`), the interactive crop canvas uses responsive sizing and layout rules:
+- **Window-Proportional Canvas Height:** Rather than locking to a fixed height, `canvasHeight` dynamically scales to **75% of `Window.window.height`** for standard landscape images, scaling up to **85% of `Window.window.height`** for portrait/tall images (with a minimum height floor of `Kirigami.Units.gridUnit * 26` ≈ 468px). When maximized or resized, wide images expand with the window without being constrained by an artificially short canvas.
+- **Full Vertical Expansion:** `canvasFrame` sets `Layout.fillHeight: true` and `Layout.minimumHeight: root.canvasHeight` so it utilizes all remaining vertical space in tall windows.
+- **Native Page Scrolling:** Plasma's `SimpleKCM` (`Kirigami.ScrollablePage`) automatically manages vertical scrolling when form controls and the canvas exceed the viewport height.
+- **Scroll-Trapping Prevention:** The canvas background wheel handler evaluates `wheel.modifiers & Qt.ControlModifier`:
+  - **Normal Wheel:** `wheel.accepted = false` passes through to allow Kirigami to scroll the settings page naturally.
+  - **Ctrl + Wheel:** `wheel.accepted = true` zooms the crop box in and out centered at the cursor position.
+
+
